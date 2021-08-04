@@ -1,7 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 Vue.use(Router)
-import Layout from '@/layout'
+
+import modules from './modules'
+
 export const constantRoutes = [
   {
     path: '/login',
@@ -15,17 +17,7 @@ export const constantRoutes = [
     hidden: true
   },
 
-  {
-    path: '/',
-    component: Layout,
-    redirect: '/dashboard',
-    children: [{
-      path: 'dashboard',
-      name: 'Dashboard',
-      component: () => import('@/views/dashboard/index'),
-      meta: { title: 'Dashboard', icon: 'dashboard' }
-    }]
-  },
+  ...modules,
 
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
