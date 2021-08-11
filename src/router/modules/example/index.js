@@ -17,6 +17,12 @@ export default (Layout) => ({
       name: 'Editor',
       component: () => import('@/views/example/demo'),
       meta: { title: '编辑器', icon: 'dashboard' }
+    },
+    {
+      path: 'keyCode',
+      name: 'KeyCode',
+      component: () => import('@/views/example/keyCode'),
+      meta: { title: '键盘事件', icon: 'dashboard' }
     }
   ]
 })
