@@ -28,12 +28,12 @@ import AlFooter from './components/Footer'
 import _ from 'lodash'
 import FileSaver from 'file-saver'
 
-import { Graph, genGraph, dropGraph, dropSuccessCb, setCursor } from '@/utils/mxgraph/Graph'
+import { Graph, genGraph, dropGraph, dropSuccessCb, setCursor, addScrollListener, wheelHandle } from '@/utils/mxgraph/Graph'
 import mxgraph from '@/utils/mxgraph'
 const { mxOutline, mxUtils, mxDragSource, mxEvent, mxUndoManager,
   mxCompactTreeLayout, mxParallelEdgeLayout, mxRadialTreeLayout, mxStackLayout,
   mxCircleLayout, mxPartitionLayout, mxFastOrganicLayout, mxEdgeLabelLayout,
-  mxCompositeLayout, mxClipboard, mxConnectionHandler, mxImage
+  mxCompositeLayout, mxClipboard, mxConnectionHandler, mxImage, mxKeyHandler, mxCellOverlay, mxPoint
 } = mxgraph
 export default {
   name: 'MxGraphEditor',
@@ -48,7 +48,8 @@ export default {
       graph: {},
       selectEdge: null,
       selectVertex: null,
-      undoMng: {}
+      undoMng: {},
+      cellMap: []
     }
   },
   mounted() {
@@ -58,35 +59,39 @@ export default {
   methods: {
     initGraph() {
       const main = this.$refs.main
-      const graph = genGraph(main.$refs.GraphContainer.$el)
+      const container = main.$refs.GraphContainer.$el
+      const graph = genGraph(container)
       this.graph = graph
       // 绘制导航
       const outline = new mxOutline(graph, main.$refs.GraphOutline)
 
-      // setCursor(graph)
+      setCursor(graph)
       const layout = new mxCompactTreeLayout(graph)
 
       this._listenEvent()
+      this._keyHandler()
+      // this._MouseListener()
       this._mxUndoManager()
       this._factoryMethod()
 
       const parent = graph.getDefaultParent()
       graph.getModel().beginUpdate()
       try {
-        const v1 = graph.insertVertex(parent, null, '流程1', 20, 20, 120, 40)
-        const v2 = graph.insertVertex(parent, null, '流程2', 200, 150, 120, 40)
-        const v3 = graph.insertVertex(parent, null, '流程3', 400, 150, 120, 40)
-        const v4 = graph.insertVertex(parent, null, '流程4', 600, 150, 120, 40)
-        const v5 = graph.insertVertex(parent, null, '流程5', 700, 150, 120, 40)
-        const v6 = graph.insertVertex(parent, null, '流程6', 800, 150, 120, 40)
-        const v7 = graph.insertVertex(parent, null, '流程7', 800, 150, 120, 40)
-        const e1 = graph.insertEdge(parent, null, '', v1, v2)
-        const e2 = graph.insertEdge(parent, null, '', v1, v3)
-        const e3 = graph.insertEdge(parent, null, '', v2, v4)
-        const e6 = graph.insertEdge(parent, null, '', v3, v4)
-        const e4 = graph.insertEdge(parent, null, '', v4, v5)
-        const e5 = graph.insertEdge(parent, null, '', v4, v6)
-        layout.execute(graph.getDefaultParent())
+        // const v1 = graph.insertVertex(parent, '0-1', '流程1', 20, 20, 120, 40)
+        // const v2 = graph.insertVertex(parent, '0-2', '流程2', 200, 150, 120, 40)
+        // console.log(v1, v2)
+        // const v3 = graph.insertVertex(parent, null, '流程3', 400, 150, 120, 40)
+        // const v4 = graph.insertVertex(parent, null, '流程4', 600, 150, 120, 40)
+        // const v5 = graph.insertVertex(parent, null, '流程5', 700, 150, 120, 40)
+        // const v6 = graph.insertVertex(parent, null, '流程6', 800, 150, 120, 40)
+        // const v7 = graph.insertVertex(parent, null, '流程7', 800, 150, 120, 40)
+        // const e1 = graph.insertEdge(parent, null, '', v1, v2)
+        // const e2 = graph.insertEdge(parent, null, '', v1, v3)
+        // const e3 = graph.insertEdge(parent, null, '', v2, v4)
+        // const e6 = graph.insertEdge(parent, null, '', v3, v4)
+        // const e4 = graph.insertEdge(parent, null, '', v4, v5)
+        // const e5 = graph.insertEdge(parent, null, '', v4, v6)
+        // layout.execute(graph.getDefaultParent())
       } finally {
         graph.getModel().endUpdate()
       }
@@ -128,9 +133,7 @@ export default {
       graph.addListener(mxEvent.MOVE_CELLS, (sender, evt) => {
         const cell = evt.properties.cells[0]
         const position = Graph.getCellPosition(cell)
-        setTimeout(() => {
-          vm.$message.info(`节点被移动到 ${JSON.stringify(position)}`)
-        }, 1000)
+        console.log(`节点被移动到 ${JSON.stringify(position)}`)
       })
 
       graph.addListener(mxEvent.CELLS_ADDED, (sender, evt) => {
@@ -140,25 +143,75 @@ export default {
         }
 
         if (cell.vertex) {
-          this.$message.info('添加了一个节点')
+          console.log('添加了一个节点')
         } else if (cell.edge) {
-          this.$message.info('添加了一条线')
+          console.log('添加了一条线')
         }
       })
 
       graph.addListener(mxEvent.LABEL_CHANGED, (sender, evt) => {
-        vm.$message.info(`内容改变为：${evt.getProperty('value')}`)
+        console.log(`内容改变为：${evt.getProperty('value')}`)
       })
 
       graph.addListener(mxEvent.CONNECT_CELL, (sender, evt) => {
-        vm.$message.info(`改变了连线`)
+        console.log('改变了连线')
       })
 
       graph.addListener(mxEvent.DOUBLE_CLICK, function(sender, evt) {
         const cell = evt.getProperty('cell')
-        console.log(cell)
-        vm.$message('我双击了单元格' + cell.value)
+        console.log('我双击了单元格' + cell.value)
       })
+    },
+    _MouseListener() {
+      const graph = this.graph
+      graph.addMouseListener({
+        mouseDown(sender, me) {
+        },
+        mouseMove(graph, event) {
+          const cell = event.getCell()
+          if (cell && cell.overlays) {
+            console.log(cell.overlays)
+          }
+        },
+        mouseUp() {},
+        dragEnter() {},
+        dragLeave() {},
+      })
+    },
+    _keyHandler() {
+      const $vm = this
+      const graph = this.graph
+      this.graph.container.focus()
+      const keyHandler = new mxKeyHandler(this.graph)
+      function nudge(keyCode) {
+        if (!graph.isSelectionEmpty()) {
+          let dx = 0; let dy = 0
+          switch (keyCode) {
+            case 37: dx = -1; break
+            case 38: dy = -1; break
+            case 39: dx = 1; break
+            case 40: dy = 1; break
+            default: break
+          }
+          graph.moveCells(graph.getSelectionCells(), dx, dy)
+        }
+      }
+      keyHandler.bindKey(37, function() { nudge(37) }) // Left Arrow
+      keyHandler.bindKey(38, function() { nudge(38) }) // Up Arrow
+      keyHandler.bindKey(39, function() { nudge(39) }) // Right Arrow
+      keyHandler.bindKey(40, function() { nudge(40) }) // Dw Arrow
+      keyHandler.bindKey(8, function() { $vm.del() }) // BackSpace
+      keyHandler.bindControlKey(68, function() { $vm.del() }) // D
+      keyHandler.bindControlKey(67, function() {
+        if (!_.isEmpty($vm.selectVertex)) {
+          mxClipboard.copy(graph, [$vm.selectVertex])
+        }
+      }) // C
+      keyHandler.bindControlKey(86, function() { mxClipboard.paste(graph) }) // V
+      keyHandler.bindControlKey(90, function() { $vm.undoMng.undo() }) // Z
+      keyHandler.bindControlKey(89, function() { $vm.undoMng.redo() }) // Y
+      keyHandler.bindControlKey(82, function() { $vm.circleLayout() }) // R
+      keyHandler.bindKey(115, function() { $vm.undoMng.redo() }) // F4
     },
     _mxUndoManager() {
       const graph = this.graph
@@ -253,6 +306,12 @@ export default {
         case 'layout':
           this.circleLayout()
           break
+        case 'select':
+          this.selectCell()
+          break
+        case 'check':
+          this.checkCell()
+          break
         default:
           console.log(prop)
           return
@@ -269,6 +328,22 @@ export default {
         this.graph.importModelXML(txt)
       }
       reader.readAsText(file)
+    },
+    selectCell() {
+      const graph = this.graph
+      const model = graph.getModel()
+      const cell = model.getCell('0-1')
+      console.log(cell)
+      graph.setSelectionCell(cell)
+    },
+    checkCell() {
+      const graph = this.graph
+      const model = graph.getModel()
+      const cell = model.getCell('0-1')
+      const overlay = new mxCellOverlay(new mxImage('mxgraph/images/check.png', 16, 16), '组件应该有且仅有一个输入组件')
+      overlay.offset = new mxPoint(0, -40)
+      overlay.cursor = 'default'
+      graph.addCellOverlay(cell, overlay)
     },
     exportFile() {
       const xml = this.graph.exportModelXML()

@@ -24,7 +24,8 @@ const {
   mxCell,
   mxGeometry,
   mxConnectionHandler,
-  mxImage
+  mxImage,
+  mxClient
 } = mxgraph
 
 Object.assign(mxEvent, {
@@ -339,5 +340,5 @@ export {
   genGraph,
   dropGraph,
   dropSuccessCb,
-  setCursor
+  setCursor,
 }

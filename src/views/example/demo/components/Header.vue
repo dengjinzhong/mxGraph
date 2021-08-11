@@ -13,6 +13,8 @@
     <el-button v-bind="btnConfig" @click="$emit('buttonClick', 'undo')">撤销</el-button>
     <el-button v-bind="btnConfig" @click="$emit('buttonClick', 'print')">输出XML</el-button>
     <el-button v-bind="btnConfig" @click="$emit('buttonClick', 'layout')">自动布局</el-button>
+    <el-button v-bind="btnConfig" @click="$emit('buttonClick', 'select')">选择流程1单元格</el-button>
+    <el-button v-bind="btnConfig" @click="$emit('buttonClick', 'check')">检查</el-button>
     <el-button v-bind="btnConfig" @click="$emit('buttonClick', 'delete')">删除</el-button>
     <!--    <el-button v-bind="btnConfig" @click="$emit('buttonClick', 'exportImage')">导出图片</el-button>-->
   </div>
