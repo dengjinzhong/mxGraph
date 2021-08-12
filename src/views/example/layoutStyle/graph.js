@@ -2,7 +2,7 @@ import mxgraph from '@/utils/mxgraph'
 
 const {
   mxGraph, mxConstants, mxEdgeStyle, mxEvent, mxGraphHandler, mxConnectionHandler, mxImage,
-  mxCompactTreeLayout, mxHierarchicalLayout
+  mxCompactTreeLayout, mxHierarchicalLayout, mxLayoutManager
 } = mxgraph
 
 export class Graph extends mxGraph {
@@ -14,8 +14,22 @@ export class Graph extends mxGraph {
   _init() {
     this._setDefaultConfig()
     this._setDefaultEdgeStyle()
+    this._setLayout()
   }
 
+  _setLayout() {
+    const layout = this.layout = new mxCompactTreeLayout(this)
+    layout.useBoundingBox = false
+    layout.edgeRouting = false
+    layout.levelDistance = 60
+    layout.nodeDistance = 16
+    const layoutMgr = new mxLayoutManager(this)
+    layoutMgr.getLayout = (cell) => {
+      if (cell.getChildCount() > 0) {
+        return layout
+      }
+    }
+  }
   _setDefaultConfig() {
     // 允许节点连线
     this.setConnectable(true)
@@ -38,15 +52,19 @@ export class Graph extends mxGraph {
     style[mxConstants.STYLE_EDGE] = mxEdgeStyle.ElbowConnector
     style[mxConstants.STYLE_STROKECOLOR] = '#409EFF'
     style[mxConstants.STYLE_ROUNDED] = true
+    style[mxConstants.STYLE_STROKEWIDTH] = 3
+    style[mxConstants.STYLE_EXIT_X] = 1 // center 出口
+    style[mxConstants.STYLE_EXIT_Y] = 0.5 // bottom
+    style[mxConstants.STYLE_ENTRY_X] = 0 // center 入口
+    style[mxConstants.STYLE_ENTRY_Y] = 0.5 // top
   }
 
   resetLayout() {
-    const layout = new mxCompactTreeLayout(this)
     const model = this.getModel()
     const parent = this.getDefaultParent()
     model.beginUpdate()
     try {
-      layout.execute(parent)
+      this.layout.execute(parent)
     } finally {
       model.endUpdate()
     }

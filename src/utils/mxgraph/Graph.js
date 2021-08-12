@@ -217,6 +217,10 @@ export class Graph extends mxGraph {
       [mxConstants.STYLE_EDGE]: mxConstants.EDGESTYLE_ORTHOGONAL,
       [mxConstants.STYLE_FONTCOLOR]: '#33333',
       [mxConstants.STYLE_LABEL_BACKGROUNDCOLOR]: '#ffa94d',
+      [mxConstants.STYLE_EXIT_X]: 1, // center 出口
+      [mxConstants.STYLE_EXIT_Y]: 0.5, // bottom
+      [mxConstants.STYLE_ENTRY_X]: 0, // center 入口
+      [mxConstants.STYLE_ENTRY_Y]: 0.5, // top
     })
     this.connectionHandler.createEdgeState = () => {
       const edge = this.createEdge()

@@ -47,6 +47,18 @@ export default (Layout) => ({
       name: 'LayoutStyle',
       component: () => import('@/views/example/layoutStyle'),
       meta: { title: '样式布局', icon: 'dashboard' }
+    },
+    {
+      path: 'autoLayout',
+      name: 'AutoLayout',
+      component: () => import('@/views/example/autoLayout'),
+      meta: { title: '自动布局', icon: 'dashboard' }
+    },
+    {
+      path: 'Orgchart',
+      name: 'Orgchart',
+      component: () => import('@/views/example/Orgchart'),
+      meta: { title: '组织结构图', icon: 'dashboard' }
     }
   ]
 })
