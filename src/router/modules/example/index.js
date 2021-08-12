@@ -29,6 +29,12 @@ export default (Layout) => ({
       name: 'EdgeStyle',
       component: () => import('@/views/example/edgeStyle'),
       meta: { title: '连接线样式', icon: 'dashboard' }
+    },
+    {
+      path: 'export',
+      name: 'Export',
+      component: () => import('@/views/example/export'),
+      meta: { title: '导出', icon: 'dashboard' }
     }
   ]
 })
