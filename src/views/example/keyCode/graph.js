@@ -14,6 +14,11 @@ export class Graph extends mxGraph {
     this._init()
   }
 
+  _init() {
+    this._keyHandler()
+    this._mxUndoManager()
+  }
+
   /**
    * 键盘事件监听
    * 上下左右移动选中目标物
@@ -50,11 +55,6 @@ export class Graph extends mxGraph {
     }
     this.getModel().addListener(mxEvent.UNDO, listener)
     this.getView().addListener(mxEvent.UNDO, listener)
-  }
-
-  _init() {
-    this._keyHandler()
-    this._mxUndoManager()
   }
 
   nudge(keyCode) {

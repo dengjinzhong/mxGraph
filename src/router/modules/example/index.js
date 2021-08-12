@@ -23,6 +23,12 @@ export default (Layout) => ({
       name: 'KeyCode',
       component: () => import('@/views/example/keyCode'),
       meta: { title: '键盘事件', icon: 'dashboard' }
+    },
+    {
+      path: 'edgeStyle',
+      name: 'EdgeStyle',
+      component: () => import('@/views/example/edgeStyle'),
+      meta: { title: '连接线样式', icon: 'dashboard' }
     }
   ]
 })
