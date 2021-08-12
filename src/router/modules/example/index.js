@@ -34,7 +34,19 @@ export default (Layout) => ({
       path: 'export',
       name: 'Export',
       component: () => import('@/views/example/export'),
-      meta: { title: '导出', icon: 'dashboard' }
+      meta: { title: '导入导出', icon: 'dashboard' }
+    },
+    {
+      path: 'layout',
+      name: 'Layout',
+      component: () => import('@/views/example/layout'),
+      meta: { title: '布局', icon: 'dashboard' }
+    },
+    {
+      path: 'layoutStyle',
+      name: 'LayoutStyle',
+      component: () => import('@/views/example/layoutStyle'),
+      meta: { title: '样式布局', icon: 'dashboard' }
     }
   ]
 })
