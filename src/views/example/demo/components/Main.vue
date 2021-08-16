@@ -1,6 +1,6 @@
 <template>
   <div style="height: 100%">
-    <graph-container ref="GraphContainer" />
+    <graph-container ref="GraphContainer" @graphClick="$emit('graphClick')" />
     <div class="outline-wrapper">
       <h4>导航器</h4>
       <div ref="GraphOutline" class="graph-outline" />

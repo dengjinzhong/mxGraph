@@ -1,6 +1,6 @@
 import mxgraph from './index'
 import _ from 'lodash'
-
+import drag from '@/assets/images/drag.png'
 const {
   mxGraph,
   mxVertexHandler,
@@ -321,6 +321,7 @@ function dropGraph(evt) {
 
 // drop成功后新建一个节点
 function dropSuccessCb(graph, evt, target, x, y) {
+  console.log(evt.dataTransfer)
   const value = this.element.getAttribute('aside-value')
   const cell = new mxCell(value, new mxGeometry(0, 0, 120, 40))
   cell.vertex = true

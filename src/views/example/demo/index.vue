@@ -9,7 +9,7 @@
       </el-aside>
       <el-container>
         <el-main>
-          <al-main ref="main" />
+          <al-main ref="main" @graphClick="graphClick" />
         </el-main>
         <el-footer>
           <al-footer />
@@ -106,7 +106,7 @@ export default {
       asideItemDom.forEach(dom => {
         const ds = mxUtils.makeDraggable(dom, dropGraph.bind(graph), dropSuccessCb, dragElt, null, null, graph.autoscroll, true)
         // 恢复原来的拖拽图标，而在图形之外
-        ds.createDragElement = mxDragSource.prototype.createDragElement
+        // ds.createDragElement = mxDragSource.prototype.createDragElement
       })
     },
     handleSelectionChange(selectModel) {
@@ -316,6 +316,10 @@ export default {
           console.log(prop)
           return
       }
+    },
+    graphClick() {
+      console.log('focus')
+      this.graph.container.focus()
     },
     importFile() {
       this.$refs.header.$refs.importInput.click()

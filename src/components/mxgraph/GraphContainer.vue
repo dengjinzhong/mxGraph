@@ -1,10 +1,23 @@
 <template>
-  <div class="graph-container"></div>
+  <div class="graph-container" @click="$emit('graphClick')" />
 </template>
 
 <script>
 export default {
-  name: 'GraphContainer'
+  name: 'GraphContainer',
+  methods: {
+    drop_handler(ev) {
+      console.log('dragOver')
+      console.log(ev)
+      ev.preventDefault()
+    },
+    drop(ev) {
+      ev.preventDefault()
+      // 获取拖放目标的id数据
+      var data = ev.dataTransfer.getData('text')
+      console.log(data)
+    }
+  }
 }
 </script>
 

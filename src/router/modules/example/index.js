@@ -59,6 +59,12 @@ export default (Layout) => ({
       name: 'Orgchart',
       component: () => import('@/views/example/Orgchart'),
       meta: { title: '组织结构图', icon: 'dashboard' }
+    },
+    {
+      path: 'treeDrag',
+      name: 'TreeDrag',
+      component: () => import('@/views/example/treeDrag'),
+      meta: { title: '树形拖拽', icon: 'dashboard' }
     }
   ]
 })
